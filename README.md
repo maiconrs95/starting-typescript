@@ -17,7 +17,9 @@ sum('2', '2'); // 22? concatenou a string :D
 
 O TypeScript nos avisa em casos como esse e também em muitos outros.
 
-Também funciona como uma "documentação":
+Também podemos usar o TS como uma "documentação". Por exemplo, imagine uma propriedade em um objeto
+que deve receber um array, mas esse array só pode ser preenchido com uma determinada string ou valor.
+Para isso temos o `type`:
 
 ```javascript
 type Platform = 'Windows' | 'Mac OS' | 'Linux';
@@ -84,7 +86,7 @@ button.addEventListener('click', function() {
 });
 ```
 
-A saída disso nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima são os valores concatenados.
+A saída do click nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima são serão os valores concatenados, em vez de somados, como o esperado.
 
 Agora o mesmo código em TypeScript:
 
@@ -106,7 +108,7 @@ button.addEventListener('click', function() {
 });
 ```
 
-Vemos que para acessar a propriedade value do input, foi necessário tipar a variável `input1` e `input2` como um `HTMLInputElement`.
+Para acessar a propriedade value do input sem o TS detectar um erro, foi necessário tipar a variável `input1` e `input2` como um `HTMLInputElement`.
 
 Também é possível ver a tipagem na função `sum`. O código acima irá retornar erro ao chamar a função `sum` passando `input.value`, pois são strings e a função espera receber números.
 
@@ -139,13 +141,13 @@ button.addEventListener('click', function() {
 });
 ```
 
-Após compilar, o TypeScript gera um arquivo `.js` que deve ser usado na aplicação. No cas, importado na `index.html`.
+Após compilar, o TypeScript gera um arquivo `.js` que deve ser usado na aplicação. No caso, importado nVemos que pa `index.html`.
 
 ## TSconfig
 
 TSconfig é o arquivo de configuração do TypeScript. Com ele é possível definir regras de compilação, outputs etc.
 
-Para gerar o arquivo `tsc`:
+Para gerar o arquivo `tsconfig`:
 
 ```shell
 tsc --init
@@ -169,4 +171,146 @@ Na propriedade `outDir` do `tsconfig` é possível explicitar a saída do arquiv
 <script src="./dist/somar.js"></script>
 ```
 
-Feito isso, basta compilarmos com o comando `tsc`, sem explicitar o arquivo manualmente.
+Na raiz onde se encontra o `tsconfig`, basta compilar com o comando `tsc` para a pasta `dir` ser gerada com os respectivos arquivos `.js`.
+
+## Recursos da linguagem - Types
+
+A tipagem é uma das features mais importantes do TypeScript. Com ela podemos definir tipos das variáveis, retorno de funções etc.
+
+Vamos ver os principais tipos presentes no TS:
+
+### Any
+
+Como o nome já diz, uma variável de tipo "qualquer":
+
+```javascript
+let value: any;
+
+value = 'foo';
+value = 10;
+value = false;
+```
+
+### Boolean
+
+Recebe `true` ou `false`:
+
+```javascript
+let isOpened: boolean;
+
+isOpened = false;
+isOpened = 'false'; // Type '"false"' is not assignable to type 'boolean'.ts(2322)
+```
+
+### Number
+
+O tipo Number é um pouco diferente do que se vê em outras linguagens. O TypeScript não dispõe de números inteiros, sem sinal ou algo do tipo. Todos os números são definidos como números reais e podem ser representados, inclusive, por binários, hexadecimais etc. Número é número.
+
+```javascript
+let total: number;
+
+total = 10 + 10;
+total = 0.2;
+total =
+```
+
+### String
+
+A famosa sequência de caracteres:
+
+```javascript
+let message: string;
+
+message = 'foo';
+message = "foo";
+message = `foo`;
+```
+
+### Array
+
+Há duas formas de se utilizar uma array:
+
+```javascript
+let values: number[];
+values = [10, 20, 30];
+
+let numbers: Array<number>;
+numbers = [10, 20, 30];
+```
+
+A primeira forma seria um "sugar syntax", já a segunda utiliza um recurso chamado Generics, muito comum em outras linguagens.
+
+### Tuple
+
+Outro tipo bem comum em outras linguagens são as tuples. É bem semelhante a um array, porém com tamanhos e valores de tipos bem definidos.
+
+```javascript
+let title: [number, string];
+
+title = [1, 'foo'];
+```
+
+### Enum
+
+São conjuntos ordenados de chaves e valores:
+
+```javascript
+enum Colors {
+    white = '#fff',
+    black = '#000'
+}
+```
+
+### Void
+
+Equivalente a uma função sem retorno:
+
+```javascript
+function logger() {
+    console.log('hit');
+}
+```
+
+
+### Null | Undefined
+
+Muito utilizados ao criar um `type`, no exemplo uma variável que recebe uma `string` ou `undefined`:
+
+```javascript
+type myType = string | undefined;
+
+let myValue: myType;
+```
+
+### Never
+
+Nunca retorna. O código quando lança uma exception, ele nunca vai retornar nada, pois foi Interrompido. A função responsável por tratar e até disparar essa expection pode receber o type `never`:
+
+```javascript
+throw new Error("error");
+
+function error(): never {
+    throw new Error("error");
+}
+```
+
+### Object
+
+Estrutura de chave => valor, muito comum no `JS`:
+
+```javascript
+let people: object;
+
+people = {
+    name: 'Maicon',
+};
+```
+
+## Type Inference
+
+Ao declararmos uma variável e não informamos um tipo, o TypeScript vai utilizar o type inference, que define o tipo da variável como o do valor atribuido a ela.
+
+```javascript
+var text = 'foo'; // string
+```
+
