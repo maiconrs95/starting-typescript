@@ -319,7 +319,7 @@ var text = 'foo'; // string
 Podemos adotar estratégias para situações em que o tipo do valor pode se sobrepor, por exemplo
 uma função onde o primeiro parâmetro pode ser uma `string` ou `number`.
 
-Para esse caso existe o `union`, onde os tipos permitidos são separados por `|`:
+Para esse caso existe o [union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html), onde os tipos permitidos são separados por `|`:
 
 ```javascript
 function logDetails(uuid: number | string, item: string) {
@@ -327,7 +327,7 @@ function logDetails(uuid: number | string, item: string) {
 }
 ```
 
-Também existem os `aliases` onde definimos um "novo" para o typescript.
+Também existem os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases) onde definimos um "novo" para o typescript.
 
 ```javascript
 type uuid = number | string;
@@ -339,7 +339,8 @@ function logDetails(uuid: uuid, item: string) {
 
 De forma resumida criamos um atalho para uma variável que pode receber mais de um tipo primitivo.
 
-Também podemos usar os `aliases` para receber um determinado valor:
+Também podemos usar os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases)
+para receber um determinado valor:
 
 ```javascript
 type platform = 'Windows' | 'Linux' | 'MacOS';
@@ -351,3 +352,222 @@ function logConsole(platform: platform) {
 logConsole('Windows');
 logConsole('Ubuntu'); // Argument of type '"Ubuntu"' is not assignable to parameter of type 'platform'.ts(2345)
 ```
+
+## Classes
+
+O TypeScript pode ser usado tanto com paradigmas como Orientação a Objetos e também funcional.
+Por conta disso, assim como no es6, ele conta com features como [classes](https://www.typescriptlang.org/docs/handbook/classes.html).
+
+```javascript
+class Employee {
+    public empName: string;
+    protected empCode: number;
+
+    constructor(name: string, code: number){
+        this.empName = name;
+        this.empCode = code;
+    }
+
+    logDetails(): void {
+        console.log(`empName: ${this.empName}, empCode: ${this.empCode}`);
+    }
+}
+
+const employee = new Employee('maicon', 12);
+
+employee.logDetails();
+
+// empName: maicon, empCode: 12
+```
+
+Classes também podem ser extendidas:
+
+```javascript
+class SalesEmployee extends Employee{
+    department: string;
+
+    constructor(name: string, code: number, department: string) {
+        super(name, code);
+
+        this.department = department;
+    }
+
+        employeeDetails(): void {
+        console.log(`
+            empName    : ${this.empName},
+            empCode    : ${this.empCode},
+            departament: ${this.department}`
+        );
+    }
+}
+
+let emp = new SalesEmployee("John Smith", 123, "Sales");
+
+emp.employeeDetails();
+
+// empName: John Smith, empCode: 123, departament: Sales
+```
+
+### Data Modifiers
+
+Na programação orientada a objetos, o conceito de 'Encapsulamento' é usado para tornar os membros da classe públicos ou privados, ou seja, uma classe pode controlar a visibilidade de seus atributos e métodos. Isso é feito usando modificadores de acesso.
+
+Existem três tipos de modificadores de acesso no TypeScript: `public`, `private` e `protected`.
+
+#### Public
+
+Por padrão, todos os membros de uma classe no TypeScript são públicos. Todos os membros públicos podem ser acessados ​​em qualquer lugar, sem restrições.
+
+```javascript
+class Employee {
+    public empCode: string;
+    empName: string;
+}
+
+let emp = new Employee();
+
+emp.empCode = 123;
+emp.empName = "Swati";
+```
+
+#### Private
+
+O modificador de acesso privado garante que os membros da classe sejam visíveis apenas para essa classe e não sejam acessíveis fora da classe que o contém.
+
+```javascript
+class Employee {
+    private empCode: number;
+    empName: string;
+}
+
+let emp = new Employee();
+
+emp.empCode = 123; // Compiler Error
+emp.empName = "Swati"; // OK
+```
+
+#### Protected
+
+O modificador de acesso protegido é semelhante ao modificador de acesso privado, exceto que os membros protegidos podem ser acessados ​​usando suas classes derivadas.
+
+```javascript
+class Employee {
+    public empName: string;
+    protected empCode: number;
+
+    constructor(name: string, code: number){
+        this.empName = name;
+        this.empCode = code;
+    }
+}
+
+class SalesEmployee extends Employee{
+    private department: string;
+
+    constructor(name: string, code: number, department: string) {
+        super(name, code);
+        this.department = department;
+    }
+}
+
+let emp = new SalesEmployee("John Smith", 123, "Sales");
+
+emp.empCode; //Compiler Error
+```
+
+#### Readonly
+
+O modificador de acesso leitura. Permite que um atributo seja acessível de fora da class, mas não pode ser alterado:
+
+```javascript
+class Employee {
+    readonly empCode: number;
+    empName: string;
+}
+
+let emp = new Employee();
+
+emp.empCode = 123; // Compiler Error
+```
+
+## TypeScript Accessor
+
+O TypeScript suporta getters/setters como uma maneira de interceptar acessos a um membro de um objeto. Isso fornece uma maneira de ter um controle mais refinado sobre como um membro é acessado em cada objeto.
+
+Vamos converter uma classe simples para usar get e set. Primeiro, vamos começar com um exemplo sem utilizar `acessors`:
+
+```javascript
+class Employee {
+  fullName: string;
+}
+
+let employee = new Employee();
+
+employee.fullName = "Bob Smith";
+
+if (employee.fullName) {
+  console.log(employee.fullName);
+}
+```
+
+Mudar ou recuperar atributos de uma classe de forma explícita pode ser conveniente, mas isso torna o código frágil.
+
+Com getters e setters podemos definir regras ao settar um nome, e também preservar os atributos da class fornecendo-o através de um getter:
+
+Nome exemplo a seguir o atributo _fullName é privado, e só pode ser definido seguindo uma regras de maxLenght:
+
+```javascript
+const fullNameMaxLength = 10;
+
+class User {
+    private _fullName: string;
+
+    constructor(name: string) {
+        this._fullName = name;
+    }
+
+    get fullName(): string {
+        return this._fullName;
+    }
+
+    set fullName(newName: string) {
+        if (newName && newName.length > fullNameMaxLength) {
+            throw new Error("fullName has a max length of " + fullNameMaxLength);
+        }
+
+        this._fullName = newName;
+    }
+}
+
+let user = new User('Denis Chambers');
+
+console.log('constructor', user.fullName)
+
+user.fullName = "Bob Smith";
+
+console.log('setter', user.fullName);
+```
+
+Um detalhe é que o getter/setter não são chamados como um método ou função utilizando parênteses, mas apenas como atributo
+do objeto:
+
+```javascript
+user.fullName = 'Maicon Silva'; // Setter
+user.fullName; // Getter
+```
+
+## Classes abstratas
+
+Classes abstratas são classes base das quais outras classes podem ser derivadas. Elas não podem ser instanciadas diretamente.
+
+```javascript
+abstract class Animal {
+    abstract makeSound(): void;
+
+    move(): void {
+        console.log("roaming the earth...");
+    }
+}
+```
+
+São utilizadas como modelos para outras class, para serem extendidas e então instanciadas.
