@@ -314,3 +314,40 @@ Ao declararmos uma variável e não informamos um tipo, o TypeScript vai utiliza
 var text = 'foo'; // string
 ```
 
+## Type Aliases e Union
+
+Podemos adotar estratégias para situações em que o tipo do valor pode se sobrepor, por exemplo
+uma função onde o primeiro parâmetro pode ser uma `string` ou `number`.
+
+Para esse caso existe o `union`, onde os tipos permitidos são separados por `|`:
+
+```javascript
+function logDetails(uuid: number | string, item: string) {
+    console.log(`A product with ${uuid} has a title as ${item}`);
+}
+```
+
+Também existem os `aliases` onde definimos um "novo" para o typescript.
+
+```javascript
+type uuid = number | string;
+
+function logDetails(uuid: uuid, item: string) {
+    console.log(`A product with ${uuid} has a title as ${item}`);
+}
+```
+
+De forma resumida criamos um atalho para uma variável que pode receber mais de um tipo primitivo.
+
+Também podemos usar os `aliases` para receber um determinado valor:
+
+```javascript
+type platform = 'Windows' | 'Linux' | 'MacOS';
+
+function logConsole(platform: platform) {
+    console.log(platform);
+}
+
+logConsole('Windows');
+logConsole('Ubuntu'); // Argument of type '"Ubuntu"' is not assignable to parameter of type 'platform'.ts(2345)
+```

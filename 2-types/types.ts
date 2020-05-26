@@ -56,3 +56,12 @@ let people: object;
 people = {
     name: 'Maicon',
 }
+
+type platform = 'Windows' | 'Linux' | 'MacOS';
+
+function logConsole(platform: platform) {
+    console.log(platform);
+}
+
+logConsole('Windows');
+logConsole('Ubuntu');
