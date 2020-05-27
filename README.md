@@ -1,10 +1,10 @@
 # Introdução - O que é o TypeScript?
 
-É um superset do JavaScript criado pela Microsoft. o TS adiciona features como tipagem estática ao JavaScript e necessita de ser transpilado para ser utilizado nos browser ou até mesmo no nodejs.
+É um superset do JavaScript criado pela Microsoft. o TS adiciona features como tipagem estática ao JavaScript e necessita de ser transpilado para ser utilizado no browser ou até mesmo no nodejs.
 
 ## Por que usar TypeScript?
 
-JavaScript é uma linguagem dinamica, com isso podemos mudar o tipo das variáveis e obter retornos inesperados.
+JavaScript é uma linguagem dinâmica, com isso podemos mudar o tipo das variáveis e obter retornos inesperados.
 
 ```javascript
 function sum(a, b) {
@@ -86,7 +86,7 @@ button.addEventListener('click', function() {
 });
 ```
 
-A saída do click nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima são serão os valores concatenados, em vez de somados, como o esperado.
+A saída do click nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima é os valores concatenados, em vez de somados, como o esperado.
 
 Agora o mesmo código em TypeScript:
 
@@ -133,7 +133,7 @@ npx tsc 1-primeiro-código/somar.ts --watch
 [9:58:27 PM] Found 1 error. Watching for file changes.
 ```
 
-Para que o código compile é necessário converter a string retornada do input para Number:
+Para que o código compile, é necessário converter a string retornada do input para Number:
 
 ```javascript
 button.addEventListener('click', function() {
@@ -141,7 +141,7 @@ button.addEventListener('click', function() {
 });
 ```
 
-Após compilar, o TypeScript gera um arquivo `.js` que deve ser usado na aplicação. No caso, importado nVemos que pa `index.html`.
+Após compilar, o TypeScript gera um arquivo `.js` que deve ser usado na aplicação. No caso, importado na página `index.html`.
 
 ## TSconfig
 
@@ -153,9 +153,9 @@ Para gerar o arquivo `tsconfig`:
 tsc --init
 ```
 
-O arquivo é criado no formato `.json` e contém várias as regras que podemos adicionar à nossa aplicação.
+O arquivo é criado no formato `.json` e contém várias regras que podemos adicionar à nossa aplicação.
 
-Na propriedade `outDir` do `tsconfig` é possível explicitar a saída do arquivo `js` que será gerado. E no `index.html` é necessário apontar pra esse arquivo de saída:
+Na propriedade `outDir` do `tsconfig` é possível explicitar a saída do arquivo `js` que será gerado, por exemplo. E no `index.html` é necessário apontar pra esse arquivo de saída:
 
 `tsconfig.json`:
 
@@ -175,7 +175,7 @@ Na raiz onde se encontra o `tsconfig`, basta compilar com o comando `tsc` para a
 
 ## Recursos da linguagem - Types
 
-A tipagem é uma das features mais importantes do TypeScript. Com ela podemos definir tipos das variáveis, retorno de funções etc.
+A tipagem é uma das features mais importantes do TypeScript. Com ela podemos definir tipos nas variáveis, retorno de funções etc.
 
 Vamos ver os principais tipos presentes no TS:
 
@@ -204,7 +204,7 @@ isOpened = 'false'; // Type '"false"' is not assignable to type 'boolean'.ts(232
 
 ### Number
 
-O tipo Number é um pouco diferente do que se vê em outras linguagens. O TypeScript não dispõe de números inteiros, sem sinal ou algo do tipo. Todos os números são definidos como números reais e podem ser representados, inclusive, por binários, hexadecimais etc. Número é número.
+O tipo Number é um pouco diferente do que se vê em outras linguagens. O TypeScript não dispõe de números inteiros, sem sinal ou algo do tipo. Todos os números são definidos como números reais e podem ser representados, inclusive, por binários, hexadecimais etc:
 
 ```javascript
 let total: number;
@@ -228,7 +228,7 @@ message = `foo`;
 
 ### Array
 
-Há duas formas de se utilizar uma array:
+Há duas formas de se utilizar um array:
 
 ```javascript
 let values: number[];
@@ -271,7 +271,6 @@ function logger() {
 }
 ```
 
-
 ### Null | Undefined
 
 Muito utilizados ao criar um `type`, no exemplo uma variável que recebe uma `string` ou `undefined`:
@@ -284,7 +283,7 @@ let myValue: myType;
 
 ### Never
 
-Nunca retorna. O código quando lança uma exception, ele nunca vai retornar nada, pois foi Interrompido. A função responsável por tratar e até disparar essa expection pode receber o type `never`:
+Nunca retorna. O código quando lança uma exception, ele nunca vai retornar nada, pois foi interrompido. A função responsável por tratar e até disparar essa expection pode receber o type `never`:
 
 ```javascript
 throw new Error("error");
@@ -327,7 +326,7 @@ function logDetails(uuid: number | string, item: string) {
 }
 ```
 
-Também existem os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases) onde definimos um "novo" para o typescript.
+Também existem os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases) onde definimos um "novo" tipo para o typescript.
 
 ```javascript
 type uuid = number | string;
@@ -337,10 +336,10 @@ function logDetails(uuid: uuid, item: string) {
 }
 ```
 
-De forma resumida criamos um atalho para uma variável que pode receber mais de um tipo primitivo.
+De forma resumida criamos um atalho para uma variável que pode receber mais de um tipo primitivo, um `number` ou uma `string`.
 
 Também podemos usar os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases)
-para receber um determinado valor:
+para receber um valor pré-definido:
 
 ```javascript
 type platform = 'Windows' | 'Linux' | 'MacOS';
@@ -380,7 +379,7 @@ employee.logDetails();
 // empName: maicon, empCode: 12
 ```
 
-Classes também podem ser extendidas:
+Classes também podem ser extendidas, para herdar atributos e métodos:
 
 ```javascript
 class SalesEmployee extends Employee{
@@ -477,7 +476,7 @@ emp.empCode; //Compiler Error
 
 #### Readonly
 
-O modificador de acesso leitura. Permite que um atributo seja acessível de fora da class, mas não pode ser alterado:
+O modificador de acesso para leitura. Permite que um atributo seja acessível de fora da classe, mas que não pode ser alterado:
 
 ```javascript
 class Employee {
@@ -498,7 +497,7 @@ Vamos converter uma classe simples para usar get e set. Primeiro, vamos começar
 
 ```javascript
 class Employee {
-  fullName: string;
+    fullName: string;
 }
 
 let employee = new Employee();
@@ -506,15 +505,15 @@ let employee = new Employee();
 employee.fullName = "Bob Smith";
 
 if (employee.fullName) {
-  console.log(employee.fullName);
+    console.log(employee.fullName);
 }
 ```
 
 Mudar ou recuperar atributos de uma classe de forma explícita pode ser conveniente, mas isso torna o código frágil.
 
-Com getters e setters podemos definir regras ao settar um nome, e também preservar os atributos da class fornecendo-o através de um getter:
+Com getters e setters podemos definir regras ao setar um nome, e também preservar os atributos da classe fornecendo-o através de um getter:
 
-Nome exemplo a seguir o atributo _fullName é privado, e só pode ser definido seguindo uma regras de maxLenght:
+No exemplo a seguir o atributo `_fullName` é privado, e só pode ser definido seguindo uma regras de maxLenght:
 
 ```javascript
 const fullNameMaxLength = 10;
@@ -548,7 +547,7 @@ user.fullName = "Bob Smith";
 console.log('setter', user.fullName);
 ```
 
-Um detalhe é que o getter/setter não são chamados como um método ou função utilizando parênteses, mas apenas como atributo
+Um detalhe é que getters e setters não são chamados como um método ou função utilizando parênteses, mas apenas como atributo
 do objeto:
 
 ```javascript
