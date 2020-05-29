@@ -4,7 +4,7 @@
 
 ## Por que usar TypeScript?
 
-JavaScript é uma linguagem dinâmica, com isso podemos mudar o tipo das variáveis e obter retornos inesperados.
+JavaScript é uma linguagem dinâmica, com isso podemos(sem querer?) mudar o tipo das variáveis e obter retornos inesperados.
 
 ```javascript
 function sum(a, b) {
@@ -34,7 +34,7 @@ interface GameDetails {
 }
 ```
 
-platforms e features em `GameDetails` são arrays que esperam os valores presente em seus respectivos types.
+Platforms e features em `GameDetails` são arrays que esperam os valores presente em seus respectivos types.
 
 ## Primeiro código em TypeScript
 
@@ -86,7 +86,7 @@ button.addEventListener('click', function() {
 });
 ```
 
-A saída do click nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima é os valores concatenados, em vez de somados, como o esperado.
+A saída do click nunca vai ser a soma dos números, pois input.value retorna uma string. O retorno da função no exemplo acima é os valores concatenados, em vez de somados, como esperado.
 
 Agora o mesmo código em TypeScript:
 
@@ -491,7 +491,7 @@ emp.empCode = 123; // Compiler Error
 
 ## TypeScript Accessor
 
-O TypeScript suporta getters/setters como uma maneira de interceptar acessos a um membro de um objeto. Isso fornece uma maneira de ter um controle mais refinado sobre como um membro é acessado em cada objeto.
+O TypeScript suporta getters/setters como uma maneira de interceptar acessos a um atributo de um objeto. Isso fornece uma maneira de ter um controle mais refinado sobre como um atributo é acessado em cada objeto.
 
 Vamos converter uma classe simples para usar get e set. Primeiro, vamos começar com um exemplo sem utilizar `acessors`:
 
@@ -570,3 +570,123 @@ abstract class Animal {
 ```
 
 São utilizadas como modelos para outras class, para serem extendidas e então instanciadas.
+
+## Interfaces
+
+[Interaces](https://www.typescriptlang.org/docs/handbook/interfaces.html) descreve o formato que um objeto deve ter:
+
+```javascript
+interface LabeledValue {
+    size: number;
+    label: string;
+    tags: string[];
+    getTag: (tag: string) => string;
+}
+
+function printLabel(labeledObj: LabeledValue) {
+    console.log(labeledObj.label);
+}
+
+let myObj: LabeledValue = {
+    size: 10,
+    label: "Size 10 Object",
+    tags: ['number', 'string', 'array'],
+    getTag: (label) => label,
+};
+
+printLabel(myObj);
+```
+
+As `interfaces` trabalham com todos os tipos dados primitivos e também aceitam `aliases` ou até mesmo outra `interface`:
+
+```javascript
+interface User {
+    name: string;
+    age?: number;
+}
+
+interface LabeledValue {
+    id: string | number;
+    user: User;
+}
+
+let myObj: LabeledValue = {
+    id: 10,
+    user: {
+        name: 'Maicon'
+    },
+}
+```
+
+Para declararmos uma `interace` opcional interrogação `?` deve ser adicionado na propriedade não obrigatória:
+
+```javascript
+interface LabeledValue {
+    id?: string | number;
+}
+```
+
+Caso contrário o objeto criado deve possuir todas as propriedades presente na `interface` para não ocorrer erro de compilação.
+
+### Readonly property
+
+Uma `interface` pode receber o modificador de acesso para propriedades que não podem ser alteradas após a criação do objeto. Para isso a propriedade em questão deve ser precedida de `readonly` e o objeto deve receber a interface como tipagem:
+
+```javascript
+interface User {
+    readonly id: number;
+    name: string;
+}
+
+const user: User = {
+    id: 1,
+    name: 'Maicon'
+}
+
+user.id = 12; // Compile Error
+user.name = 'Maicon Silva'; // OK
+```
+
+### Extendes interface
+
+Interfaces podem ser extendidas assim como classes, dessa maneira a nova interface criada recebe os atributos da "interface mãe" mais os seus:
+
+```javascript
+interface User {
+    readonly id: number;
+    name: string;
+}
+
+interface UserAddress extends User {
+    zipcode: string;
+}
+
+const address: UserAddress = {
+    id: 1,
+    name: 'Maicon',
+    zipcode: '05164110'
+}
+```
+
+### Implementando a interface em uma classe
+
+Podemos também implementar uma classe que utiliza uma interface como base:
+
+```javascript
+interface User {
+    readonly id: number;
+    name: string;
+}
+
+class CreateUser implements User {
+    id: number;
+    name: string;
+
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
+const user = new CreateUser(10, 'Maicon Silva');
+```
