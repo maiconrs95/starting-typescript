@@ -690,3 +690,187 @@ class CreateUser implements User {
 
 const user = new CreateUser(10, 'Maicon Silva');
 ```
+
+## Generics
+
+Uma parte importante na engenharia de software é a construção de componenets que não apenas possuem um
+escopo bem definido e consistente, mas que também são reutilizaveis. Esses são os [generics](https://www.typescriptlang.org/docs/handbook/generics.html).
+
+Vamo criar uma função que é reposável por atribuir e retornar o estado de uma variável:
+
+```javascript
+function useState() {
+    let state: number;
+
+    function getState() {
+        return state;
+    }
+
+    function setState(newState: number) {
+        state = newState;
+    }
+
+    return {
+        getState,
+        setState,
+    };
+}
+
+const newState = useState();
+
+newState.setState(123);
+
+console.log(newState.getState()); // 123
+```
+
+Nesse cenário, passar uma string ou qualquer outro tipo de dado para `setState` vai gerar um erro de compilação, pois a função `setState` espera receber um número.
+
+Uma forma de contornar isso seria utilizar o `union`:
+
+```javascript
+...
+
+let state: number | string;
+
+function setState(newState: number | string) {
+    state = newState;
+}
+
+...
+
+newState.setState(123); // OK
+newState.setState('string'); // OK
+```
+
+Nesse momento entra o `generic`. Através do `generic` a variável pode receber seu tipo na primera vez que `setState` foi chamado, e não ser alterado posteriormente:
+
+```javascript
+newState.setState(123); // Agora o state é um número
+newState.setState('string'); // Erro
+```
+
+Embora o uso `any` ou `union` possa ser genérico, ele pode nos privar de saber exatamente o valor que está entrando na função e também o que essa função irá retornar exatamente.
+
+Nesse caso, precisamos de uma maneira de capturar o tipo do argumento de forma que também possamos usá-lo para indicar o que está sendo retornado. Aqui, usaremos uma variável de tipo, um tipo especial de variável que funciona em tipos e não em valores.
+
+```javascript
+// S = state
+// T = Type
+// K = key
+// V = value
+// E = element
+
+function useState<S>() {
+    let state: S;
+
+    function getState() {
+        return state;
+    }
+
+    function setState(newState: S) {
+        state = newState;
+    }
+
+    return {
+        getState,
+        setState,
+    };
+}
+```
+
+Isso faz com que o tipo da vairável seja definido no momento em que a função é chamada a primeira vez, no nosso caso na criação do `newState`.
+
+Se o tipo não for definido `unknown` será retornado:
+
+```javascript
+function useState<unknown>(): {
+    getState: () => unknown;
+    setState: (newState: unknown) => void;
+}
+```
+
+Para definirmos o tipo:
+
+```javascript
+const newState = useState<string>();
+
+newState.setState('Agora é uma string'); // OK, foi criado como uma <string>
+console.log(newState.getState());
+
+newState.setState(123); // Erro
+console.log(newState.getState());
+```
+
+Dessa forma nosso código bloqueia a entrada de qualquer coisa que não seja uma string na função, mas isso
+faz com que qualquer coisa possa ser passado como `generic` de `useState` na sua criação:
+
+```javascript
+const newState = useState<boolean | number[]>();
+
+newState.setState([123, 456]); // OK
+console.log(newState.getState());
+
+newState.setState(false); // OK
+console.log(newState.getState());
+
+newState.setState('Agora é uma string'); // Error
+console.log(newState.getState());
+```
+
+Para contornar esse cenário, podemos extender os tipos que o `generic` de `useState` pode aceitar:
+
+```javascript
+function useState<S extends string | number>() {
+    let state: S;
+
+    function getState() {
+        return state;
+    }
+
+    function setState(newState: S) {
+        state = newState;
+    }
+
+    return {
+        getState,
+        setState,
+    };
+}
+
+const newState = useState<boolean | number[]>(); // Erro
+```
+
+### Default generic type
+
+Também podemos atribuir um valor padrão para o `generic` utilizando o operador `=`:
+
+```javascript
+function useState<S extends string | number = string>() {
+    let state: S;
+
+    function getState() {
+        return state;
+    }
+
+    function setState(newState: S) {
+        state = newState;
+    }
+
+    return {
+        getState,
+        setState,
+    };
+}
+```
+
+Isso faz com que se `useState` for chamado sem a definição do `generic`, o tipo atribuido será `string`:
+
+```javascript
+const newState = useState(); // string
+
+newState.setState('Agora é uma string');
+console.log(newState.getState());
+
+newState.setState(123); // Erro
+console.log(newState.getState());
+```
