@@ -1,6 +1,6 @@
 # Introdução - O que é o TypeScript?
 
-É um superset do JavaScript criado pela Microsoft. o TS adiciona features como tipagem estática ao JavaScript e necessita de ser transpilado para ser utilizado no browser ou até mesmo no nodejs.
+É um superset do JavaScript criado pela Microsoft. o TS adiciona features como tipagem estática ao JavaScript e necessita ser transpilado para ser utilizado no browser ou até mesmo no nodejs.
 
 ## Por que usar TypeScript?
 
@@ -209,9 +209,10 @@ O tipo Number é um pouco diferente do que se vê em outras linguagens. O TypeSc
 ```javascript
 let total: number;
 
-total = 10 + 10;
-total = 0.2;
-total =
+total = 90 + 10;
+total = 100.3;
+total = 0064;
+total = 1100100;
 ```
 
 ### String
@@ -266,7 +267,7 @@ enum Colors {
 Equivalente a uma função sem retorno:
 
 ```javascript
-function logger() {
+function logger(): void {
     console.log('hit');
 }
 ```
@@ -307,7 +308,7 @@ people = {
 
 ## Type Inference
 
-Ao declararmos uma variável e não informamos um tipo, o TypeScript vai utilizar o type inference, que define o tipo da variável como o do valor atribuido a ela.
+Ao declararmos uma variável sem tipagem definida, o TypeScript vai utilizar o `type inference`, que define o tipo da variável como o tipo do valor atribuido a ela.
 
 ```javascript
 var text = 'foo'; // string
@@ -326,7 +327,7 @@ function logDetails(uuid: number | string, item: string) {
 }
 ```
 
-Também existem os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases) onde definimos um "novo" tipo para o typescript.
+Também existem os [aliases](https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases) onde definimos um "novo" tipo para o typescript:
 
 ```javascript
 type uuid = number | string;
@@ -411,7 +412,7 @@ emp.employeeDetails();
 
 Na programação orientada a objetos, o conceito de 'Encapsulamento' é usado para tornar os membros da classe públicos ou privados, ou seja, uma classe pode controlar a visibilidade de seus atributos e métodos. Isso é feito usando modificadores de acesso.
 
-Existem três tipos de modificadores de acesso no TypeScript: `public`, `private` e `protected`.
+Existem quatro tipos principais de modificadores de acesso no TypeScript: `public`, `private`, `protected`, `readonly`.
 
 #### Public
 
@@ -476,7 +477,7 @@ emp.empCode; //Compiler Error
 
 #### Readonly
 
-O modificador de acesso para leitura. Permite que um atributo seja acessível de fora da classe, mas que não pode ser alterado:
+O modificador de acesso para leitura. Permite que um atributo seja acessível de fora da classe, mas não alterado:
 
 ```javascript
 class Employee {
@@ -513,7 +514,7 @@ Mudar ou recuperar atributos de uma classe de forma explícita pode ser convenie
 
 Com getters e setters podemos definir regras ao setar um nome, e também preservar os atributos da classe fornecendo-o através de um getter:
 
-No exemplo a seguir o atributo `_fullName` é privado, e só pode ser definido seguindo uma regras de maxLenght:
+No exemplo a seguir o atributo `_fullName` é privado, e só pode ser definido seguindo uma regra de `maxLenght`:
 
 ```javascript
 const fullNameMaxLength = 10;
@@ -569,7 +570,7 @@ abstract class Animal {
 }
 ```
 
-São utilizadas como modelos para outras class, para serem extendidas e então instanciadas.
+São utilizadas como modelos para outras classes, para serem extendidas e então instanciadas.
 
 ## Interfaces
 
@@ -597,7 +598,7 @@ let myObj: LabeledValue = {
 printLabel(myObj);
 ```
 
-As `interfaces` trabalham com todos os tipos dados primitivos e também aceitam `aliases` ou até mesmo outra `interface`:
+As `interfaces` trabalham com todos os tipos primitivos e também aceitam `aliases` ou até mesmo outra `interface`:
 
 ```javascript
 interface User {
@@ -618,7 +619,7 @@ let myObj: LabeledValue = {
 }
 ```
 
-Para declararmos uma `interace` opcional interrogação `?` deve ser adicionado na propriedade não obrigatória:
+Para declararmos uma atributo na `interace` que é opcional, interrogação `?` deve ser adicionado na propriedade opcional:
 
 ```javascript
 interface LabeledValue {
@@ -647,9 +648,9 @@ user.id = 12; // Compile Error
 user.name = 'Maicon Silva'; // OK
 ```
 
-### Extendes interface
+### Extends interface
 
-Interfaces podem ser extendidas assim como classes, dessa maneira a nova interface criada recebe os atributos da "interface mãe" mais os seus:
+Interfaces podem ser extendidas assim como classes, dessa maneira a nova interface criada recebe os atributos da "interface mãe", mais os seus:
 
 ```javascript
 interface User {
@@ -742,7 +743,7 @@ newState.setState(123); // OK
 newState.setState('string'); // OK
 ```
 
-Nesse momento entra o `generic`. Através do `generic` a variável pode receber seu tipo na primera vez que `setState` foi chamado, e não ser alterado posteriormente:
+Nesse momento entra o `generic`. Através do `generic` a variável pode receber seu tipo na primera vez que `useState` foi chamado, e não ser alterado posteriormente:
 
 ```javascript
 newState.setState(123); // Agora o state é um número
@@ -751,7 +752,7 @@ newState.setState('string'); // Erro
 
 Embora o uso `any` ou `union` possa ser genérico, ele pode nos privar de saber exatamente o valor que está entrando na função e também o que essa função irá retornar exatamente.
 
-Nesse caso, precisamos de uma maneira de capturar o tipo do argumento de forma que também possamos usá-lo para indicar o que está sendo retornado. Aqui, usaremos uma variável de tipo, um tipo especial de variável que funciona em tipos e não em valores.
+Nesse caso, precisamos de uma maneira de capturar o tipo do argumento de forma que também possamos usá-lo para indicar o que está sendo retornado. No próximo exemplo, vamor usar uma variável especial, um tipo de variável que funciona em tipos e não em valores.
 
 ```javascript
 // S = state
@@ -789,7 +790,7 @@ function useState<unknown>(): {
 }
 ```
 
-Para definirmos o tipo:
+Para definirmos a tipagem do generic, basta adicionar `<type>` na criação de `useState`:
 
 ```javascript
 const newState = useState<string>();
@@ -801,8 +802,8 @@ newState.setState(123); // Erro
 console.log(newState.getState());
 ```
 
-Dessa forma nosso código bloqueia a entrada de qualquer coisa que não seja uma string na função, mas isso
-faz com que qualquer coisa possa ser passado como `generic` de `useState` na sua criação:
+Dessa forma nosso código bloqueia a entrada de qualquer dado que não seja uma string na função, mas isso
+faz com que qualquer tipagem possa ser atribuida como `generic` de `useState` na sua criação:
 
 ```javascript
 const newState = useState<boolean | number[]>();
@@ -817,7 +818,7 @@ newState.setState('Agora é uma string'); // Error
 console.log(newState.getState());
 ```
 
-Para contornar esse cenário, podemos extender os tipos que o `generic` de `useState` pode aceitar:
+É possível extender os tipos que o `generic` de `useState` pode aceitar para controlar sua inicialização:
 
 ```javascript
 function useState<S extends string | number>() {
@@ -874,3 +875,131 @@ console.log(newState.getState());
 newState.setState(123); // Erro
 console.log(newState.getState());
 ```
+
+## Type Utilities
+
+O TypeScript fornece vários [type utilities](https://www.typescriptlang.org/docs/handbook/utility-types.html) para facilitar transformações de tipos comuns. Esses utilitários estão disponíveis globalmente.
+
+```javascript
+interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+const todo: Todo = {
+    title: 'Delete inactive users',
+    description: 'Remove all inactive users',
+    completed: false,
+};
+
+console.log(todo); // { ..., completed: false }
+
+todo.completed = true; // OK
+
+console.log(todo); // { ..., completed: true }
+```
+
+Alterar propriedades de objetos de forma direta pode acarretar side effects, quebra de contratos etc. Uma forma de previnir essa operação seria o `Readonly<T>` type utilitie:
+
+```javascript
+interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+const todo: Readonly<Todo> = {
+    title: 'Delete inactive users',
+    description: 'Remove all inactive users',
+    completed: false,
+};
+
+console.log(todo);
+
+todo.completed = true; // Error
+
+console.log(todo);
+```
+
+Uma forma de alterar esse objeto seria uma função que recebe o objeto e os dados que devem ser alterados, e retorna esses
+valores atualizados. Para isso temos o `Partial<T>`, que recebe propriedades do tipo, porém de forma opcional:
+
+```javascript
+interface Todo {
+    title: string;
+    description: string;
+}
+
+function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+    return { ...todo, ...fieldsToUpdate };
+}
+
+const todo1 = {
+    title: 'organize desk',
+    description: 'clear clutter',
+};
+
+const todo2 = updateTodo(todo1, {
+    description: 'throw out trash',
+});
+```
+
+Também podemos criar um novo tipo "pegando propriedades" de um tipo já existente com o `pick`:
+
+```javascript
+interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+type TodoPreview = Pick<Todo, 'title' | 'completed'>;
+
+const todo: TodoPreview = {
+    title: 'Clean room',
+    completed: false,
+};
+```
+
+Uma outra forma de conseguir o mesmo resultado seria usar o `Omit`:
+
+```javascript
+interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+type TodoPreview = Omit<Todo, 'description'>;
+
+const todo: TodoPreview = {
+    title: 'Clean room',
+    completed: false,
+};
+```
+
+Ele funciona de forma contraria ao `Pick`, recebendo apenas as propriedades que devem ser omitidas, no caso `description`. Assim `TodoPreview` é construido com `title` e `completed`.
+
+Existem alguns outros type utilities que podemos usar, vale a pena conferir na [doc](https://www.typescriptlang.org/docs/handbook/utility-types.html).
+
+# Conclusão
+
+O uso do TypeScript trás uma série de benefícios ao JavaScript. A fluência na linguagem só vai acontecer a partir do momento que você começar a utiliza-lo, e ver como é bom ter um controle maior sobre os dados que entram e saem do seu sistema. Como toda tecnologia é necessário praticar e aplicar.
+
+Se você ja programa em JavaScript, a curva de adaptação é pequena, e é algo que vale a pena encarar.
+
+Para concluir, os tópicos que abordamos no post foram:
+
+- Por que usar TypeScript?;
+- Primeiro código, compilação;
+- TSConfig;
+- Recursos da linguagem - Types;
+- Type Inference;
+- Type Aliases e Union;
+- Classes;
+- TypeScript Accessors;
+- Classes abstratas;
+- Interfaces;
+- Generics;
+- Type Utilities.
