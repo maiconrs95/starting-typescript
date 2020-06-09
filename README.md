@@ -983,6 +983,122 @@ Ele funciona de forma contraria ao `Pick`, recebendo apenas as propriedades que 
 
 Existem alguns outros type utilities que podemos usar, vale a pena conferir na [doc](https://www.typescriptlang.org/docs/handbook/utility-types.html).
 
+## Decorators
+
+Os [decorator](https://www.typescriptlang.org/docs/handbook/decorators.html) são um recurso que pode ser usado para extender funcionalidades de classes, métodos, acessador, propriedade ou parâmetro. Utilizam `@Expression`, onde `expression` deve avaliar uma função que será chamada em tempo de execução com informações sobre a declaração decorada.
+
+Atualmente os decorators é uma proposta de [estágio 2](https://github.com/tc39/proposal-decorators) para o TypeScript.
+
+> Decoradores são um recurso experimental que pode mudar em versões futuras.
+
+Para habilitar o suporte experimental dos decorators, é necessário uma configuração no `tsconfig.json`:
+
+```javascript
+...
+"experimentalDecorators": true,
+...
+```
+
+### Criando um decorator
+
+O decorador é uma função que recebe `target`, senndo `target` a instância da classe, como um parâmetro default:
+
+```javascript
+function sealed(target) {
+    console.log(target);
+}
+
+@sealed
+class Foo {}
+```
+
+### Factory decorator
+
+Se quisermos personalizar como um decorador é aplicado a uma declaração, podemos escrever uma fábrica de decoradores. Uma Decorator Factory é simplesmente uma função que retorna a expressão que será chamada pelo decorador em tempo de execução.
+
+Podemos escrever uma fábrica de decoradores da seguinte maneira:
+
+```javascript
+function logger(prefix: string) {
+    return (target) => {
+        console.log(`${target} - ${prefix}`);
+    }
+}
+
+
+@logger('isSealed')
+class Foo { }
+```
+
+### Class decorator
+
+Como exemplo, vamos criar uma classe `API` que recebe um `decorator` para setar sua versão.
+
+O que esse `decorator` de class faz é retornar um construtor de classe que extende por padrão a classe `target`:
+
+```javascript
+function setAPIVersion(apiVersion: string) {
+    return (constructor) => {
+        return class extends constructor {
+            version = apiVersion;
+        }
+    }
+}
+
+@setAPIVersion('1.0.8')
+class API { }
+
+console.log(new API()); // class_1 { version: '1.0.8' }
+```
+
+### Property decorator
+
+Um case comum é precisarmos validar uma propriedade de uma classe no momento em que ela é instânciada ou em que o dado é alterado. Nesse cenário, um `property decorator` é uma solução.
+
+Imagina a classe `Person` que precisa receber a idade da pessoa, porém essa pessoa precisa ser maior de idade, ou no nosso caso, ter mais que 18 anos:
+
+```javascript
+function minPersonAge(minAge: number) {
+    return (target: any, key: string) => {
+        let val = target[key];
+
+        const getter = () => val;
+
+        const setter = (value: number) => {
+            if (value < 18) {
+                throw new Error('Age must be over 18');
+            }
+
+            val = value;
+        };
+
+        Object.defineProperty(target, key, {
+            get: getter,
+            set: setter,
+        });
+    };
+}
+
+class Person {
+    // Precisa ser maior que 18
+    @minPersonAge(18)
+    age: number;
+
+    constructor(a: number) {
+        this.age = a;
+    }
+}
+
+console.log(new Person(17)); // Error
+console.log(new Person(18)); // Person {}
+```
+
+### Method decorator
+
+### Parameter decorator
+
+### Acessor decorator
+
 # Conclusão
 
 O uso do TypeScript trás uma série de benefícios ao JavaScript. A fluência na linguagem só vai acontecer a partir do momento que você começar a utiliza-lo, e ver como é bom ter um controle maior sobre os dados que entram e saem do seu sistema. Como toda tecnologia é necessário praticar e aplicar.
@@ -1002,4 +1118,5 @@ Para concluir, os tópicos que abordamos no post foram:
 - Classes abstratas;
 - Interfaces;
 - Generics;
-- Type Utilities.
+- Type Utilities;
+- Decorators.
